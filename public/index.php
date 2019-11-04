@@ -1,9 +1,11 @@
 <?php 
-
-
+require "../src/db.php";
 require "../src/consultas_db.php";
-$res = $sentencia_respuestas->fetchAll();
-print_r($res[0]  );
+
+$consulta = new Consultas();
+
+$stmt = $consulta->listarTemas();
+$stmt_keys = array_keys($stmt[0]);
 ?>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -13,9 +15,11 @@ print_r($res[0]  );
     <link rel="stylesheet" href="css/pure.css">
   </head>
   <body>
-    <div class="">
-
-    </div>
+    <pre>
+      <?=print_r($stmt)?>
+      <?=print_r($stmt_keys)?>
+      <?=print_r($stmt[0][$stmt_keys[0]])?>
+    </pre>
     <table class="pure-table">
       <thead>
         <tr>
@@ -27,17 +31,22 @@ print_r($res[0]  );
         </tr>
       </thead>
       <tbody>
-      <tr> 
-      <?php while ($fila = $sentencia_temas->fetch()) { ?>
-        <?php foreach($fila as $td){?>
-            <td><?= $td ?></td>
-        <?php }?>
-        <td>
-        <?= $res[0]?>
-        </td>
-      </tr>
+        <?php for ($i=0; $i < count($stmt); $i++) { ?>
+          <tr>
+          <?php foreach($stmt_keys as $fila){?>
+            <?php if ($fila == "titulo"){ ?>
+              <td>
+                <a href="tabla.php?t=<?=$stmt[$i][$fila]?>">
+                <?=$stmt[$i][$fila]?></a>
+              </td>
+            <?php }else{ ?>
+              <td><?= $stmt[$i][$fila] ?></td>
+            <?php } ?>
+          <?php }?>
+          </tr>
         <?php } ?>
       </tbody>
     </table>
+    <a href="crearTema.php">Añadir Tema</a>
   </body>
 </html>
